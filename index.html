@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZEMX</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                container: {
+                    center: true,
+                    padding: "2rem",
+                    screens: {
+                        "2xl": "1400px",
+                    },
+                },
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: {
+                            DEFAULT: "hsl(var(--primary))",
+                            foreground: "hsl(var(--primary-foreground))",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(var(--secondary))",
+                            foreground: "hsl(var(--secondary-foreground))",
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(var(--destructive))",
+                            foreground: "hsl(var(--destructive-foreground))",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(var(--muted))",
+                            foreground: "hsl(var(--muted-foreground))",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(var(--accent))",
+                            foreground: "hsl(var(--accent-foreground))",
+                        },
+                        popover: {
+                            DEFAULT: "hsl(var(--popover))",
+                            foreground: "hsl(var(--popover-foreground))",
+                        },
+                        card: {
+                            DEFAULT: "hsl(var(--card))",
+                            foreground: "hsl(var(--card-foreground))",
+                        },
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)",
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Zinc Theme (Light - Unused but kept for reference) */
+            --background: 0 0% 100%;
+            --foreground: 240 10% 3.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 240 10% 3.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 240 10% 3.9%;
+            --primary: 240 5.9% 10%;
+            --primary-foreground: 0 0% 98%;
+            --secondary: 240 4.8% 95.9%;
+            --secondary-foreground: 240 5.9% 10%;
+            --muted: 240 4.8% 95.9%;
+            --muted-foreground: 240 3.8% 46.1%;
+            --accent: 240 4.8% 95.9%;
+            --accent-foreground: 240 5.9% 10%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 0 0% 98%;
+            --border: 240 5.9% 90%;
+            --input: 240 5.9% 90%;
+            --ring: 240 10% 3.9%;
+            --radius: 0.5rem;
+        }
+
+        .dark {
+            /* Modified Zinc Theme (Dark Gray Focus) */
+            /* Background: Zinc-900 (#18181b) - Clearly dark gray, not black */
+            --background: 240 6% 10%;
+            --foreground: 0 0% 98%;
+
+            /* Card: Same as background */
+            --card: 240 6% 10%;
+            --card-foreground: 0 0% 98%;
+
+            --popover: 240 6% 10%;
+            --popover-foreground: 0 0% 98%;
+
+            --primary: 0 0% 98%;
+            --primary-foreground: 240 5.9% 10%;
+
+            --secondary: 240 3.7% 15.9%;
+            --secondary-foreground: 0 0% 98%;
+
+            --muted: 240 3.7% 15.9%;
+            --muted-foreground: 240 5% 64.9%;
+
+            --accent: 240 3.7% 15.9%;
+            --accent-foreground: 0 0% 98%;
+
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 0 0% 98%;
+
+            /* Border: Zinc-800 (#27272a) - Distinct Dark Gray, NOT WHITE */
+            --border: 240 4% 16%;
+            --input: 240 4% 16%;
+            --ring: 240 4.9% 83.9%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+        }
+
+        /* Custom Spinner */
+        .loader {
+            border: 3px solid hsl(var(--muted));
+            border-top: 3px solid hsl(var(--primary));
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: hsl(var(--muted));
+            border-radius: 20px;
+        }
+
+        /* Toggle Group Styles */
+        .toggle-group {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius);
+            background-color: hsl(var(--muted));
+            padding: 4px;
+            color: hsl(var(--muted-foreground));
+            height: 2.25rem;
+        }
+
+        .toggle-item {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            border-radius: calc(var(--radius) - 2px);
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            line-height: 1.25rem;
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
+            height: 100%;
+            border: 1px solid transparent;
+        }
+
+        .toggle-item:hover:not(.active) {
+            color: hsl(var(--foreground));
+        }
+
+        .toggle-item.active {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+
+        /* Force Dark Autocomplete Background to match Body (Zinc-950/Black) for Transparent feel */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px hsl(var(--background)) inset !important;
+            /* Match Body Background */
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col antialiased selection:bg-primary/20 selection:text-primary">
+
+    <!-- Header -->
+    <header
+        class="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div class="container flex flex-col space-y-3 py-6">
+
+            <!-- Top Row: Logo & Search -->
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-1">
+                <a href="#" onclick="event.preventDefault(); fetchTrendingVideos('KR');"
+                    class="flex items-center space-x-2.5 min-w-max group">
+                    <img src="https://i.imgur.com/YwBNNLd.png"
+                        class="h-8 w-auto opacity-80 group-hover:opacity-50 transition-opacity" alt="ZEMX Logo">
+                    <span
+                        class="inline-block font-bold text-2xl tracking-wider text-white/80 group-hover:text-white/50 transition-colors">ZEMX</span>
+
+                </a>
+
+                <div class="w-full max-w-2xl flex items-center gap-3">
+                    <div class="relative flex-grow">
+                        <!-- Transparent Background, Darker Gray Border (Zinc-700) -->
+                        <input type="text" id="searchInput" placeholder="검색..."
+                            class="flex h-10 w-full rounded-md border border-zinc-700 bg-transparent px-3 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-zinc-600 focus-visible:outline-none focus:bg-transparent focus-visible:bg-transparent focus:ring-1 focus:ring-zinc-600 disabled:cursor-not-allowed disabled:opacity-50 text-white">
+                    </div>
+                    <!-- Search Button (Icon Only, Matches Settings Button Style) -->
+                    <button onclick="searchVideos()"
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-red-900/50 bg-red-950/30 text-red-500 shadow-sm transition-colors hover:bg-red-900/50 hover:text-red-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-900 disabled:pointer-events-none disabled:opacity-50">
+                        <i data-lucide="search" class="h-5 w-5"></i>
+                    </button>
+                    <!-- Trending Button Group (K | E) -->
+                    <div
+                        class="inline-flex h-10 items-center justify-center rounded-md border border-zinc-700 bg-zinc-800 text-zinc-400 shadow-sm overflow-hidden">
+                        <button onclick="fetchTrendingVideos('KR')" title="한국 급상승"
+                            class="h-full w-9 flex items-center justify-center hover:bg-zinc-700 hover:text-white transition-colors focus:outline-none">
+                            <span class="text-sm font-bold">K</span>
+                        </button>
+                        <div class="h-3.5 w-[1px] bg-zinc-600/50"></div>
+                        <button onclick="fetchTrendingVideos('US')" title="미국 급상승"
+                            class="h-full w-9 flex items-center justify-center hover:bg-zinc-700 hover:text-white transition-colors focus:outline-none">
+                            <span class="text-sm font-bold">E</span>
+                        </button>
+                    </div>
+                    <!-- Settings Button -->
+                    <button onclick="openSettings()"
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-zinc-700 bg-zinc-800 text-zinc-400 shadow-sm transition-colors hover:bg-zinc-700 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+                        <i data-lucide="settings" class="h-5 w-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottom Row: Filters -->
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- Removed 'Filter' text as requested -->
+
+                <!-- Date Filter -->
+                <div class="toggle-group" id="dateFilterGroup">
+                    <button class="toggle-item active" data-value="today">오늘</button>
+                    <button class="toggle-item" data-value="3days">3일</button>
+                    <button class="toggle-item" data-value="week">일주일</button>
+                    <button class="toggle-item" data-value="month">한달</button>
+                    <button class="toggle-item" data-value="year">일년</button>
+                    <button class="toggle-item" data-value="all">전체</button>
+                </div>
+
+                <div class="w-px h-6 bg-border mx-2 hidden sm:block"></div>
+
+                <!-- Duration Filter -->
+                <div class="toggle-group" id="durationFilterGroup">
+                    <button class="toggle-item active" data-value="any">전체</button>
+                    <button class="toggle-item" data-value="short">숏폼</button>
+                    <button class="toggle-item" data-value="longform">롱폼</button>
+                    <button class="toggle-item" data-value="20m">20분↑</button>
+                    <button class="toggle-item" data-value="60m">60분↑</button>
+                </div>
+
+                <div class="w-px h-6 bg-border mx-2 hidden sm:block"></div>
+
+                <!-- Viral Filter -->
+                <div class="toggle-group" id="viralFilterGroup">
+                    <button class="toggle-item active" data-value="0">전체</button>
+                    <button class="toggle-item" data-value="100">100%↑</button>
+                    <button class="toggle-item" data-value="200">200%↑</button>
+                    <button class="toggle-item" data-value="500">500%↑</button>
+                </div>
+
+                <!-- Region Filter Removed -->
+
+                <!-- View Toggle (Right Aligned) -->
+                <div class="ml-auto flex items-center bg-muted rounded-md p-1 gap-1">
+                    <button id="viewBtnGrid" onclick="setViewMode('grid')"
+                        class="p-1.5 rounded-sm bg-background text-foreground shadow-sm transition-all hover:text-primary">
+                        <i data-lucide="layout-grid" class="h-4 w-4"></i>
+                    </button>
+                    <button id="viewBtnList" onclick="setViewMode('list')"
+                        class="p-1.5 rounded-sm text-muted-foreground hover:bg-background/50 hover:text-foreground transition-all">
+                        <i data-lucide="list" class="h-4 w-4"></i>
+                    </button>
+                    <div class="w-px h-4 bg-border/50 mx-1"></div>
+                    <button onclick="exportToExcel()" title="엑셀로 저장"
+                        class="p-1.5 rounded-sm text-green-700 hover:bg-green-500/10 hover:text-green-500 transition-all">
+                        <i data-lucide="file-spreadsheet" class="h-4 w-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sort Row (Refined) -->
+            <div
+                class="flex items-center gap-1.5 text-[13px] py-0.5 mt-0 overflow-x-auto whitespace-nowrap scrollbar-hide text-muted-foreground select-none">
+
+                <button onclick="sortVideos('viralIndex')"
+                    class="sort-btn flex items-center gap-1 px-2 py-0.5 rounded-sm hover:bg-white/5 hover:text-zinc-200 transition-colors active-sort text-primary font-bold"
+                    data-field="viralIndex">
+                    급상승지수 <span class="sort-icon">↓</span>
+                </button>
+                <div class="w-px h-3 bg-white/10"></div>
+
+                <button onclick="sortVideos('viewCount')"
+                    class="sort-btn flex items-center gap-1 px-2 py-0.5 rounded-sm hover:bg-white/5 hover:text-zinc-200 transition-colors"
+                    data-field="viewCount">
+                    조회수 <span class="sort-icon"></span>
+                </button>
+                <div class="w-px h-3 bg-white/10"></div>
+
+                <button onclick="sortVideos('subCount')"
+                    class="sort-btn flex items-center gap-1 px-2 py-0.5 rounded-sm hover:bg-white/5 hover:text-zinc-200 transition-colors"
+                    data-field="subCount">
+                    구독자수 <span class="sort-icon"></span>
+                </button>
+                <div class="w-px h-3 bg-white/10"></div>
+
+                <button onclick="sortVideos('durationSec')"
+                    class="sort-btn flex items-center gap-1 px-2 py-0.5 rounded-sm hover:bg-white/5 hover:text-zinc-200 transition-colors"
+                    data-field="durationSec">
+                    영상길이 <span class="sort-icon"></span>
+                </button>
+                <div class="w-px h-3 bg-white/10"></div>
+
+                <button onclick="sortVideos('publishedAt')"
+                    class="sort-btn flex items-center gap-1 px-2 py-0.5 rounded-sm hover:bg-white/5 hover:text-zinc-200 transition-colors"
+                    data-field="publishedAt">
+                    게시일 <span class="sort-icon"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container py-8 flex-grow">
+
+        <!-- Loading State -->
+        <div id="loadingSpinner" class="hidden flex flex-col items-center justify-center py-24">
+            <div class="loader mb-6"></div>
+            <p class="text-muted-foreground text-sm font-medium animate-pulse">데이터를 채굴하는 중입니다...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="flex flex-col items-center justify-center py-24 text-center space-y-6">
+            <div class="rounded-full bg-muted/50 p-8 ring-1 ring-border">
+                <i data-lucide="pickaxe" class="h-12 w-12 text-muted-foreground"></i>
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-2xl font-semibold tracking-tight">Hidden Gem Finder</h2>
+                <p class="text-muted-foreground max-w-[500px] text-base leading-relaxed">
+                    관심있는 주제를 검색하여<br>구독자 대비 조회수가 폭발한 '급상승' 영상을 발굴해보세요.
+                </p>
+            </div>
+        </div>
+
+        <!-- Results Grid -->
+        <div id="resultsGrid"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 hidden">
+            <!-- Cards will be injected here -->
+        </div>
+
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal"
+        class="fixed inset-0 z-[100] bg-background/80 backdrop-blur-sm hidden flex items-center justify-center p-4 duration-200">
+        <div
+            class="fixed left-[50%] top-[50%] z-[100] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background shadow-lg duration-200 sm:rounded-xl ring-1 ring-border">
+            <div class="flex flex-col space-y-1.5 p-6 pb-2">
+                <h3 class="font-semibold leading-none tracking-tight">API 설정</h3>
+                <p class="text-sm text-muted-foreground">유튜브 API 키를 입력해주세요. 기기에만 저장됩니다.</p>
+            </div>
+            <div class="p-6 pt-2 space-y-4">
+                <div class="space-y-2">
+                    <label
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">YouTube
+                        API Keys </label>
+                    <textarea id="youtubeKeysInput"
+                        class="flex min-h-[120px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                        placeholder="AIzaSy...&#10;AIzaSy..."></textarea>
+                    <p class="text-xs text-muted-foreground">여러 개의 키를 입력하면 할당량 초과 시 자동으로 다음 키를 사용합니다.</p>
+                </div>
+            </div>
+            <div class="flex items-center p-6 pt-0 justify-end gap-2">
+                <button onclick="closeSettings()"
+                    class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">닫기</button>
+                <button onclick="saveSettings()"
+                    class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">저장하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Modal -->
+    <div id="analysisModal"
+        class="fixed inset-0 z-[100] bg-background/80 backdrop-blur-sm hidden flex items-center justify-center p-4 duration-200"
+        style="animation: fadeIn 0.2s ease-out;">
+        <div
+            class="fixed left-[50%] top-[50%] z-[100] grid w-full max-w-3xl translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background shadow-lg duration-200 sm:rounded-xl md:w-full ring-1 ring-border">
+
+            <!-- Modal Header -->
+            <div class="flex flex-col space-y-2 text-center sm:text-left border-b p-6 bg-muted/10">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold leading-none tracking-tight flex items-center gap-2">
+                        <i data-lucide="sparkles" class="h-4 w-4 text-primary fill-primary/20"></i>
+                        AI 분석 리포트
+                    </h3>
+                    <button onclick="closeModal()"
+                        class="rounded-sm opacity-50 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+                        <i data-lucide="x" class="h-5 w-5"></i>
+                        <span class="sr-only">Close</span>
+                    </button>
+                </div>
+                <p id="modalVideoTitle" class="text-sm text-muted-foreground font-medium truncate pr-8">영상 제목...</p>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto custom-scrollbar max-h-[60vh] relative min-h-[360px]">
+                <div id="modalLoading"
+                    class="absolute inset-0 flex flex-col items-center justify-center z-10 bg-background/50 backdrop-blur-[1px]">
+                    <div class="loader mb-4 border-t-primary h-8 w-8 border-2"></div>
+                    <p id="modalLoadingText" class="text-sm text-muted-foreground font-medium animate-pulse">댓글 반응을 분석하고
+                        있습니다...</p>
+                </div>
+                <div id="modalContent"
+                    class="space-y-6 text-sm text-foreground leading-7 hidden animate-in fade-in duration-300"></div>
+                <div id="scriptContent"
+                    class="space-y-6 text-sm text-foreground leading-7 hidden animate-in fade-in duration-300">
+                    <button onclick="showAnalysisView()"
+                        class="mb-2 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 px-3 text-xs gap-2">
+                        <i data-lucide="arrow-left" class="h-3.5 w-3.5"></i>
+                        분석 결과로 돌아가기
+                    </button>
+                    <div id="scriptBody"
+                        class="prose prose-zinc prose-invert max-w-none text-foreground bg-muted/30 p-6 rounded-lg border">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div
+                class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 border-t p-4 bg-muted/10 rounded-b-xl">
+                <button onclick="closeModal()"
+                    class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-6 py-2">
+                    닫기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed bottom-6 right-6 z-[150] flex items-center w-full max-w-md p-4 rounded-lg shadow-lg dark:bg-zinc-900 bg-white border border-border transform translate-y-24 opacity-0 transition-all duration-300">
+        <div
+            class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-900/30 dark:text-red-400">
+            <i data-lucide="alert-circle" class="h-5 w-5"></i>
+        </div>
+        <div class="ml-3 text-sm font-medium" id="toastMessage">Error occurred</div>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        // Defaults (Blank initially, populated from LocalStorage)
+        let YOUTUBE_API_KEYS = [];
+        let GEMINI_API_KEY = '';
+        const GEMINI_MODEL = 'gemini-2.5-flash';
+
+        // --- State ---
+        let currentKeyIndex = 0;
+
+        function getApiKey() {
+            return YOUTUBE_API_KEYS[currentKeyIndex];
+        }
+
+        async function fetchWithRetry(urlBuilder) {
+            // urlBuilder is a function that takes an API Key and returns the full URL
+            const maxRetries = YOUTUBE_API_KEYS.length;
+            let attempts = 0;
+
+            while (attempts < maxRetries) {
+                const apiKey = getApiKey();
+                const url = urlBuilder(apiKey);
+
+                try {
+                    const res = await fetch(url);
+                    const data = await res.json();
+
+                    if (data.error && data.error.code === 403 && data.error.errors[0].reason === 'quotaExceeded') {
+                        console.warn(`Key ${apiKey} exhausted. Switching...`);
+                        currentKeyIndex = (currentKeyIndex + 1) % YOUTUBE_API_KEYS.length;
+                        attempts++;
+                        continue; // Retry with next key
+                    }
+
+                    if (data.error) throw new Error(data.error.message);
+                    return data;
+
+                } catch (error) {
+                    // Only retry on quota errors (handled above). 
+                    // Network errors or other API errors should bubble up unless we want to rotate on those too?
+                    // User only asked for quota rotation.
+                    throw error;
+                }
+            }
+            throw new Error('All API keys quota exhausted.');
+        }
+
+
+        // --- State ---
+
+        function loadSettings() {
+            const savedYoutube = localStorage.getItem('mineTool_youtubeKeys');
+            const savedGemini = localStorage.getItem('mineTool_geminiKey');
+
+            if (savedYoutube) {
+                YOUTUBE_API_KEYS = JSON.parse(savedYoutube);
+            } else {
+                YOUTUBE_API_KEYS = [];
+                // saveSettingsCallback([], ''); // Don't auto-save empty keys, let user input them.
+            }
+
+            if (savedGemini) {
+                GEMINI_API_KEY = savedGemini;
+            } else {
+                GEMINI_API_KEY = '';
+            }
+        }
+
+        function openSettings() {
+            const youtubeKeysInput = document.getElementById('youtubeKeysInput');
+            const geminiKeyInput = document.getElementById('geminiKeyInput');
+            const settingsModal = document.getElementById('settingsModal');
+
+            if (youtubeKeysInput) youtubeKeysInput.value = YOUTUBE_API_KEYS.join('\n');
+            if (geminiKeyInput) geminiKeyInput.value = GEMINI_API_KEY;
+            if (settingsModal) settingsModal.classList.remove('hidden');
+        }
+
+        function closeSettings() {
+            const settingsModal = document.getElementById('settingsModal');
+            if (settingsModal) settingsModal.classList.add('hidden');
+        }
+
+        function saveSettings() {
+            const youtubeKeysInput = document.getElementById('youtubeKeysInput');
+            const geminiKeyInput = document.getElementById('geminiKeyInput');
+
+            const youtubeRaw = youtubeKeysInput.value.trim();
+            const geminiRaw = geminiKeyInput ? geminiKeyInput.value.trim() : '';
+
+            if (!youtubeRaw) {
+                alert('YouTube API Key를 입력해주세요.');
+                return;
+            }
+
+            const newKeys = youtubeRaw.split('\n').map(k => k.trim()).filter(k => k);
+            saveSettingsCallback(newKeys, geminiRaw);
+            closeSettings();
+
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            if (toast) {
+                toastMessage.innerText = '설정이 저장되었습니다.';
+                toast.classList.remove('translate-y-24', 'opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('translate-y-24', 'opacity-0');
+                }, 3000);
+            }
+        }
+
+        function saveSettingsCallback(youtubeKeys, geminiKey) {
+            YOUTUBE_API_KEYS = youtubeKeys;
+            GEMINI_API_KEY = geminiKey;
+            currentKeyIndex = 0;
+            localStorage.setItem('mineTool_youtubeKeys', JSON.stringify(YOUTUBE_API_KEYS));
+            localStorage.setItem('mineTool_geminiKey', GEMINI_API_KEY);
+        }
+
+        let currentVideos = [];
+        let currentViewMode = 'grid';
+        let currentSortField = 'viralIndex';
+        let currentSortOrder = 'desc'; // 'desc' or 'asc'
+        let currentAnalysisVideo = null;
+        let currentAnalysisData = null;
+
+        // --- DOM Elements ---
+        const searchInput = document.getElementById('searchInput');
+        const resultsGrid = document.getElementById('resultsGrid');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const emptyState = document.getElementById('emptyState');
+        const analysisModal = document.getElementById('analysisModal');
+        const modalLoading = document.getElementById('modalLoading');
+        const modalLoadingText = document.getElementById('modalLoadingText');
+        const modalContent = document.getElementById('modalContent');
+        const scriptContent = document.getElementById('scriptContent');
+        const scriptBody = document.getElementById('scriptBody');
+        const modalVideoTitle = document.getElementById('modalVideoTitle');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        // --- Functions ---
+        function setupToggleGroup(groupId, onChangeCallback = null) {
+            const group = document.getElementById(groupId);
+            if (!group) return;
+            group.addEventListener('click', (e) => {
+                const clicked = e.target.closest('.toggle-item');
+                if (!clicked) return;
+                group.querySelectorAll('.toggle-item').forEach(btn => btn.classList.remove('active'));
+                clicked.classList.add('active');
+                if (onChangeCallback) onChangeCallback(clicked.dataset.value);
+            });
+        }
+
+        function getToggleValue(groupId) {
+            const active = document.querySelector(`#${groupId} .active`);
+            return active ? active.dataset.value : null;
+        }
+
+        function sortVideos(field) {
+            if (currentSortField === field) {
+                currentSortOrder = currentSortOrder === 'desc' ? 'asc' : 'desc';
+            } else {
+                currentSortField = field;
+                currentSortOrder = 'desc'; // Default to desc for most metrics
+            }
+            updateSortUI();
+
+            // Perform Sort
+            currentVideos.sort((a, b) => {
+                let valA = a[field];
+                let valB = b[field];
+
+                // Date handling
+                if (field === 'publishedAt') {
+                    // publishedAt is string, but rawDate is Date object
+                    // We mapped data to use rawDate for easier logic, but UI button uses publishedAt?
+                    // Let's use rawDate property if active sort is 'publishedAt'
+                    // Actually, the button data-field='publishedAt'. So field is 'publishedAt'.
+                    // Our currentVideos objs have 'publishedAt' (string) and 'rawDate' (Date).
+                    // String comparison of ISO dates works, but let's be safe.
+                    valA = new Date(valA).getTime();
+                    valB = new Date(valB).getTime();
+                }
+
+                if (currentSortOrder === 'desc') {
+                    return valB - valA;
+                } else {
+                    return valA - valB;
+                }
+            });
+
+            renderResults();
+        }
+
+        function updateSortUI() {
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.classList.remove('active-sort', 'text-primary', 'font-bold');
+                btn.querySelector('.sort-icon').innerText = '';
+
+                if (btn.dataset.field === currentSortField) {
+                    btn.classList.add('active-sort', 'text-primary', 'font-bold');
+                    btn.querySelector('.sort-icon').innerText = currentSortOrder === 'desc' ? '↓' : '↑';
+                }
+            });
+        }
+
+        async function fetchTrendingVideos(region = 'KR') {
+            // Reset Sort to Default (Viral Index)
+            currentSortField = 'viralIndex';
+            currentSortOrder = 'desc';
+            updateSortUI();
+
+            // Reset Date Filter to 'today' (Default)
+            const dateGroup = document.getElementById('dateFilterGroup');
+            if (dateGroup) {
+                dateGroup.querySelectorAll('.toggle-item').forEach(btn => btn.classList.remove('active'));
+                const defaultDate = dateGroup.querySelector('[data-value="today"]');
+                if (defaultDate) defaultDate.classList.add('active');
+            }
+
+            // Reset Duration Filter to 'any' (Default)
+            const durationGroup = document.getElementById('durationFilterGroup');
+            if (durationGroup) {
+                durationGroup.querySelectorAll('.toggle-item').forEach(btn => btn.classList.remove('active'));
+                const defaultDuration = durationGroup.querySelector('[data-value="any"]');
+                if (defaultDuration) defaultDuration.classList.add('active');
+            }
+
+            // Reset Viral Filter to '0' (All)
+            const viralGroup = document.getElementById('viralFilterGroup');
+            if (viralGroup) {
+                viralGroup.querySelectorAll('.toggle-item').forEach(btn => btn.classList.remove('active'));
+                const allBtn = viralGroup.querySelector('[data-value="0"]');
+                if (allBtn) allBtn.classList.add('active');
+            }
+
+            const regionType = region; // Use parameter instead of filter
+            // ... (rest of function)
+
+            showLoading(true);
+            resultsGrid.innerHTML = '';
+
+            try {
+                let regionParam = '';
+                if (regionType === 'KR') regionParam = '&regionCode=KR';
+                else if (regionType === 'US') regionParam = '&regionCode=US';
+
+                // Fetch Most Popular Videos
+                // Note: videoDuration parameter is NOT supported for mostPopular chart in API.
+                // We fetch 50 raw popular videos.
+                const videosData = await fetchWithRetry(key => `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&chart=mostPopular&maxResults=50${regionParam}&key=${key}`);
+
+                if (!videosData.items || videosData.items.length === 0) {
+                    showLoading(false);
+                    emptyState.classList.remove('hidden');
+                    emptyState.querySelector('h2').innerText = '인기 급상승 동영상이 없습니다.';
+                    return;
+                }
+
+                // Prepare Data for Processing (Reuse logic)
+                // We already have 'videosData' which contains stats and contentDetails (unlike search API which needs 2nd call).
+                // But we DO need Channel Details for Subscriber Count.
+                const channelIds = [...new Set(videosData.items.map(item => item.snippet.channelId))].join(',');
+                const channelsData = await fetchWithRetry(key => `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&id=${channelIds}&key=${key}`);
+
+                const channelMap = {};
+                channelsData.items.forEach(item => {
+                    channelMap[item.id] = {
+                        stats: item.statistics,
+                        country: item.snippet.country
+                    };
+                });
+
+                currentVideos = [];
+                videosData.items.forEach(item => {
+                    const vid = item.id; // For videos endpoint, id is a string, not object
+                    const cid = item.snippet.channelId;
+                    const durationSec = parseDuration(item.contentDetails.duration);
+
+                    // Note: Region Filtering for Trending?
+                    // The API 'mostPopular' with regionCode IS strict. We don't need manual filtering usually,
+                    // but we can apply channel country check if user wants "Strict".
+                    // However, Trending list usually contains what IS popular in that region, even if channel is foreign.
+                    // For "Trending", it's safer to trust YouTube's list.
+
+                    const channelInfo = channelMap[cid];
+                    const viewCount = parseInt(item.statistics?.viewCount || 0);
+                    const subCount = parseInt(channelInfo?.stats?.subscriberCount || 0);
+                    const hiddenSub = channelInfo?.stats?.hiddenSubscriberCount;
+
+                    let viralIndex = 0;
+                    let viralIndexDisplay = 'N/A';
+                    if (subCount > 0 && !hiddenSub) {
+                        viralIndex = (viewCount / subCount) * 100;
+                        viralIndexDisplay = viralIndex.toFixed(1) + '%';
+                    }
+
+                    currentVideos.push({
+                        id: vid,
+                        title: item.snippet.title,
+                        thumbnail: item.snippet.thumbnails.medium.url,
+                        channelTitle: item.snippet.channelTitle,
+                        channelId: cid,
+                        publishedAt: item.snippet.publishedAt,
+                        publishedDate: new Date(item.snippet.publishedAt).toLocaleDateString(),
+                        rawDate: new Date(item.snippet.publishedAt),
+                        viewCount: viewCount,
+                        subCount: subCount,
+                        viralIndex: viralIndex,
+                        viralIndexDisplay: viralIndexDisplay,
+                        durationSec: durationSec
+                    });
+                });
+
+                currentVideos.sort((a, b) => b.viralIndex - a.viralIndex); // Still sort by viral index? Or kept as Trending Order?
+                // User asked for "Top 50 results". Usually Trending implies "Rank 1 to 50".
+                // But this tool is "MinesTool" (Viral finder).
+                // Let's stick to Viral Sort for consistency, OR user might want generic popular.
+                // User: "키워드 없이 클릭하면 선택한 것의 top 50 결과".
+                // Let's KEEP Viral Sort because that's the identity of this app.
+
+                renderResults();
+
+            } catch (error) {
+                console.error(error);
+                showToast('인기 동영상을 불러오는 중 오류가 발생했습니다: ' + error.message);
+                emptyState.classList.remove('hidden');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function searchVideos() {
+            // Reset Sort to Default (Viral Index)
+            currentSortField = 'viralIndex';
+            currentSortOrder = 'desc';
+            updateSortUI();
+
+            const query = searchInput.value.trim();
+            const dateType = getToggleValue('dateFilterGroup') || 'today';
+            const durationType = getToggleValue('durationFilterGroup') || 'any';
+            const regionType = getToggleValue('regionFilterGroup') || 'all'; // Default All
+
+            showLoading(true);
+            resultsGrid.innerHTML = '';
+
+            try {
+                let publishedAfter = '';
+                const now = new Date();
+
+                if (dateType === 'today') {
+                    // 오늘 00:00부터
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    publishedAfter = `&publishedAfter=${today.toISOString().split('.')[0]}Z`;
+                } else if (dateType === '3days') {
+                    // 3일 전 00:00부터
+                    const threeDaysAgo = new Date();
+                    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+                    threeDaysAgo.setHours(0, 0, 0, 0);
+                    publishedAfter = `&publishedAfter=${threeDaysAgo.toISOString().split('.')[0]}Z`;
+                } else if (dateType === 'week') {
+                    // 7일 전 00:00부터
+                    const weekAgo = new Date();
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    weekAgo.setHours(0, 0, 0, 0);
+                    publishedAfter = `&publishedAfter=${weekAgo.toISOString().split('.')[0]}Z`;
+                } else if (dateType === 'month') {
+                    // 30일 전 00:00부터
+                    const monthAgo = new Date();
+                    monthAgo.setDate(monthAgo.getDate() - 30);
+                    monthAgo.setHours(0, 0, 0, 0);
+                    publishedAfter = `&publishedAfter=${monthAgo.toISOString().split('.')[0]}Z`;
+                } else if (dateType === 'year') {
+                    // 365일 전 00:00부터
+                    const yearAgo = new Date();
+                    yearAgo.setDate(yearAgo.getDate() - 365);
+                    yearAgo.setHours(0, 0, 0, 0);
+                    publishedAfter = `&publishedAfter=${yearAgo.toISOString().split('.')[0]}Z`;
+                }
+
+                // Region & Language Logic
+                let regionParam = '';
+                let langParam = '';
+
+                if (regionType === 'KR') {
+                    regionParam = '&regionCode=KR';
+                    langParam = '&relevanceLanguage=ko';
+                } else if (regionType === 'US') {
+                    regionParam = '&regionCode=US';
+                    langParam = '&relevanceLanguage=en';
+                } else {
+                    // 'all' = no region restriction (original behavior)
+                    regionParam = '';
+                    langParam = '';
+                }
+
+
+                let searchItems = [];
+
+                // Dynamic maxResults based on duration filter
+                // 전체: 80개, 숏폼: 50개, 4분↑: medium+long, 20분↑: 50개, 60분↑: 100개
+
+                if (durationType === 'any') {
+                    // 전체: 80개
+                    const searchData = await fetchWithRetry(key => `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=80&q=${encodeURIComponent(query)}&type=video&videoDuration=any${publishedAfter}${regionParam}${langParam}&order=viewCount&key=${key}`);
+                    searchItems = searchData.items || [];
+
+                } else if (durationType === 'short') {
+                    // 숏폼: 50개
+                    const searchData = await fetchWithRetry(key => `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=${encodeURIComponent(query)}&type=video&videoDuration=short${publishedAfter}${regionParam}${langParam}&order=viewCount&key=${key}`);
+                    searchItems = searchData.items || [];
+
+                } else if (durationType === 'longform') {
+                    // test.html 전략 적용: "반반 치킨" (Medium 25개 + Long 25개)
+                    // 장점: 4분 이상 전 구간 커버 + 비용 절감 (50개 호출)
+
+                    const mediumPromise = fetchWithRetry(key => `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${encodeURIComponent(query)}&type=video&videoDuration=medium${publishedAfter}${regionParam}${langParam}&order=viewCount&key=${key}`);
+                    const longPromise = fetchWithRetry(key => `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${encodeURIComponent(query)}&type=video&videoDuration=long${publishedAfter}${regionParam}${langParam}&order=viewCount&key=${key}`);
+
+                    const results = await Promise.allSettled([mediumPromise, longPromise]);
+
+                    let mediumItems = [];
+                    let longItems = [];
+
+                    // Medium 결과 처리
+                    if (results[0].status === 'fulfilled') {
+                        mediumItems = results[0].value.items || [];
+                    } else {
+                        console.error('[롱폼-Medium] 에러:', results[0].reason);
+                    }
+
+                    // Long 결과 처리
+                    if (results[1].status === 'fulfilled') {
+                        longItems = results[1].value.items || [];
+                    } else {
+                        console.error('[롱폼-Long] 에러:', results[1].reason);
+                    }
+
+                    // 중복 제거 (videoId 기준)
+                    const combined = [...mediumItems, ...longItems];
+                    const uniqueIds = new Set();
+                    searchItems = combined.filter(item => {
+                        const vid = item.id.videoId;
+                        if (uniqueIds.has(vid)) return false;
+                        uniqueIds.add(vid);
+                        return true;
+                    });
+
+                    console.log(`[롱폼 필터] Medium: ${mediumItems.length}, Long: ${longItems.length} -> 합계: ${searchItems.length}개`);
+
+                } else if (durationType === '20m') {
+                    // 20분↑: long만
+                    const searchData = await fetchWithRetry(key => `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=${encodeURIComponent(query)}&type=video&videoDuration=long${publishedAfter}${regionParam}${langParam}&order=viewCount&key=${key}`);
+                    searchItems = searchData.items || [];
+
+                } else if (durationType === '60m') {
+                    // 60분↑: long 100개 (클라이언트 필터링)
+                    const searchData = await fetchWithRetry(key => `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=100&q=${encodeURIComponent(query)}&type=video&videoDuration=long${publishedAfter}${regionParam}${langParam}&order=viewCount&key=${key}`);
+                    searchItems = searchData.items || [];
+                }
+
+                // Deduping
+                const uniqueIds = new Set();
+                searchItems = searchItems.filter(item => {
+                    if (uniqueIds.has(item.id.videoId)) return false;
+                    uniqueIds.add(item.id.videoId);
+                    return true;
+                });
+
+                if (searchItems.length === 0) {
+                    showLoading(false);
+                    emptyState.classList.remove('hidden');
+                    emptyState.querySelector('h2').innerText = '검색 결과가 없습니다.';
+                    return;
+                }
+
+                const videoIds = searchItems.map(item => item.id.videoId).join(',');
+                const channelIds = [...new Set(searchItems.map(item => item.snippet.channelId))].join(',');
+
+                const videosData = await fetchWithRetry(key => `https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id=${videoIds}&key=${key}`);
+
+                const videoDetailsMap = {};
+                videosData.items.forEach(item => { videoDetailsMap[item.id] = { stats: item.statistics, duration: parseDuration(item.contentDetails.duration) }; });
+
+                const channelsData = await fetchWithRetry(key => `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&id=${channelIds}&key=${key}`);
+
+                const channelMap = {};
+                channelsData.items.forEach(item => {
+                    channelMap[item.id] = {
+                        stats: item.statistics,
+                        country: item.snippet.country
+                    };
+                });
+
+                currentVideos = [];
+                searchItems.forEach(item => {
+                    const vid = item.id.videoId;
+                    const cid = item.snippet.channelId;
+                    const details = videoDetailsMap[vid];
+                    if (!details) return;
+
+
+                    const durationSec = details.duration;
+
+                    // --- Strict Duration Filter (교집합 AND 로직) ---
+                    const beforeFilter = durationType === 'longform';
+                    if (durationType === 'longform' && durationSec < 180) {
+                        if (beforeFilter) console.log(`[필터링] ${item.snippet.title.substring(0, 30)}... - ${durationSec}초 (롱폼 3분 미만 제외)`);
+                        return;
+                    }
+                    if (durationType === '20m' && durationSec < 1200) return; // 20분(1200초) 이상
+                    if (durationType === '60m' && durationSec < 3600) return; // 60분(3600초) 이상
+                    if (durationType === 'short' && durationSec > 180) return; // 숏폼: 3분(180초) 이하
+                    // --------------------------
+
+
+                    // --- Country Filter (교집합 AND 로직) ---
+                    const channelInfo = channelMap[cid];
+                    const channelCountry = channelInfo?.country;
+
+                    // 1. 인도 관련 국가 제외 (모든 필터에 공통 적용)
+                    const indianRegionCountries = ['IN', 'PK', 'BD', 'LK', 'NP'];
+                    if (channelCountry && indianRegionCountries.includes(channelCountry)) return;
+
+                    // 2. 텍스트 기반 인도 필터링 (힌디어 등 문자 포함 시 제외)
+                    // Devanagari script range: \u0900-\u097F
+                    // Common Indian keywords can be added if needed
+                    const indianTextPattern = /[\u0900-\u097F]|hindi|india|bollywood/i;
+                    if (indianTextPattern.test(item.snippet.title) || indianTextPattern.test(item.snippet.channelTitle)) {
+                        console.log(`[인도 필터링] 텍스트 감지: ${item.snippet.title}`);
+                        return;
+                    }
+
+                    // 3. 지역 필터 적용
+                    // 전체: 인도 제외한 모든 국가 (국가 미설정 포함)
+                    // 한국: 한국 채널만 (국가 미설정 포함)
+                    // 미국: 미국 채널만 (국가 미설정 포함)
+                    if (regionType === 'KR' && channelCountry && channelCountry !== 'KR') return;
+                    if (regionType === 'US' && channelCountry && channelCountry !== 'US') return;
+
+                    const viewCount = parseInt(details.stats?.viewCount || 0);
+                    const subCount = parseInt(channelInfo?.stats?.subscriberCount || 0);
+                    const hiddenSub = channelInfo?.stats?.hiddenSubscriberCount;
+
+                    let viralIndex = 0;
+                    let viralIndexDisplay = 'N/A';
+                    if (subCount > 0 && !hiddenSub) {
+                        viralIndex = (viewCount / subCount) * 100;
+                        viralIndexDisplay = viralIndex.toFixed(1) + '%';
+                    }
+
+                    currentVideos.push({
+                        id: vid,
+                        title: item.snippet.title,
+                        thumbnail: item.snippet.thumbnails.medium.url,
+                        channelTitle: item.snippet.channelTitle,
+                        channelId: cid, // Added channelId for linking
+                        publishedAt: item.snippet.publishedAt,
+                        publishedDate: new Date(item.snippet.publishedAt).toLocaleDateString(),
+                        rawDate: new Date(item.snippet.publishedAt),
+                        viewCount: viewCount,
+                        subCount: subCount,
+                        viralIndex: viralIndex,
+                        viralIndexDisplay: viralIndexDisplay,
+                        durationSec: durationSec
+                    });
+                });
+
+                currentVideos.sort((a, b) => b.viralIndex - a.viralIndex);
+                renderResults();
+
+            } catch (error) {
+                console.error(error);
+                showToast('데이터를 불러오는 중 오류가 발생했습니다: ' + error.message);
+                emptyState.classList.remove('hidden');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function setViewMode(mode) {
+            currentViewMode = mode;
+
+            // Update Buttons
+            const btnGrid = document.getElementById('viewBtnGrid');
+            const btnList = document.getElementById('viewBtnList');
+
+            if (mode === 'grid') {
+                btnGrid.className = 'p-1.5 rounded-sm bg-background text-foreground shadow-sm transition-all hover:text-primary';
+                btnList.className = 'p-1.5 rounded-sm text-muted-foreground hover:bg-background/50 hover:text-foreground transition-all';
+            } else {
+                btnList.className = 'p-1.5 rounded-sm bg-background text-foreground shadow-sm transition-all hover:text-primary';
+                btnGrid.className = 'p-1.5 rounded-sm text-muted-foreground hover:bg-background/50 hover:text-foreground transition-all';
+            }
+
+            renderResults();
+        }
+
+        function exportToExcel() {
+            const threshold = parseInt(getToggleValue('viralFilterGroup') || 0);
+            const filteredVideos = currentVideos.filter(v => v.viralIndex >= threshold);
+
+            if (filteredVideos.length === 0) {
+                showToast('저장할 데이터가 없습니다.');
+                return;
+            }
+
+            // CSV Header
+            let csvContent = "제목,채널명,게시일,조회수,구독자수,급상승지수,영상길이,영상링크\n";
+
+            filteredVideos.forEach(v => {
+                // Escape quotes and handle commas in content
+                const title = `"${v.title.replace(/"/g, '""')}"`;
+                const channel = `"${v.channelTitle.replace(/"/g, '""')}"`;
+                const link = `https://www.youtube.com/watch?v=${v.id}`;
+
+                csvContent += `${title},${channel},${v.publishedDate},${v.viewCount},${v.subCount},${v.viralIndexDisplay},${formatDuration(v.durationSec)},${link}\n`;
+            });
+
+            // BOM for Korean support in Excel
+            const bom = "\uFEFF";
+            const blob = new Blob([bom + csvContent], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+
+            const now = new Date();
+            const timestamp = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0') + "_" + String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
+
+            link.setAttribute("href", url);
+            link.setAttribute("download", `youtube_minestool_${timestamp}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function renderResults() {
+            resultsGrid.innerHTML = '';
+
+            const threshold = parseInt(getToggleValue('viralFilterGroup') || 0);
+            const filteredVideos = currentVideos.filter(v => v.viralIndex >= threshold);
+
+            if (currentVideos.length === 0 || filteredVideos.length === 0) {
+                resultsGrid.innerHTML = '<div class="col-span-full text-center text-muted-foreground py-20">조건에 맞는 영상이 없습니다. 필터를 조정해보세요.</div>';
+                resultsGrid.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                lucide.createIcons();
+                return;
+            }
+
+            resultsGrid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            // Toggle Container Class based on View Mode
+            if (currentViewMode === 'grid') {
+                resultsGrid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6';
+            } else {
+                resultsGrid.className = 'flex flex-col w-full';
+                // Inject Header Row for Excel View
+                const header = document.createElement('div');
+                // Header: All Centered
+                // Grid cols adjustment: First col (IMG) 60px -> 100px for 16:9 ratio
+                // grid-cols-[100px_1fr_120px_100px_80px_80px_100px]
+                header.className = 'grid grid-cols-[100px_1fr_120px_80px_80px_80px_80px_100px] gap-4 px-4 py-3.5 bg-muted/30 border-b border-border text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 items-center text-center';
+                header.innerHTML = `
+                    <div class="text-center">IMG</div>
+                    <div class="text-left">제목</div>
+                    <div class="text-left">채널</div>
+                    <div class="text-center cursor-pointer hover:text-primary transition-colors select-none" onclick="sortResults('viewCount')">조회수 ${currentSortField === 'viewCount' ? '↓' : ''}</div>
+                    <div class="text-center cursor-pointer hover:text-primary transition-colors select-none" onclick="sortResults('subCount')">구독자수 ${currentSortField === 'subCount' ? '↓' : ''}</div>
+                    <div class="text-center">영상길이</div>
+                    <div class="text-center cursor-pointer hover:text-primary transition-colors select-none" onclick="sortResults('publishedDate')">게시일 ${currentSortField === 'publishedDate' ? '↓' : ''}</div>
+                    <div class="text-center cursor-pointer hover:text-primary transition-colors select-none text-red-500 font-bold" onclick="sortResults('viralIndex')">급상승지수 ${currentSortField === 'viralIndex' ? '↓' : ''}</div>
+                `;
+                resultsGrid.appendChild(header);
+            }
+
+            filteredVideos.forEach(video => {
+                // Viral Index Color Coding: 500%+ yellow, 1000%+ red
+                let viralText = 'text-zinc-400';
+                if (video.viralIndex >= 1000) {
+                    viralText = 'text-red-500 font-bold';
+                } else if (video.viralIndex >= 500) {
+                    viralText = 'text-yellow-500 font-bold';
+                }
+
+                // View Count Color Coding: 100k+ yellow, 1M+ red
+                let viewText = 'text-muted-foreground';
+                if (video.viewCount >= 1000000) {
+                    viewText = 'text-red-500 font-bold';
+                } else if (video.viewCount >= 100000) {
+                    viewText = 'text-yellow-500 font-bold';
+                }
+
+                // Subscriber Count Color Coding: 100k+ yellow, 1M+ red
+                let subText = 'text-foreground';
+                if (video.subCount >= 1000000) {
+                    subText = 'text-red-500 font-bold';
+                } else if (video.subCount >= 100000) {
+                    subText = 'text-yellow-500 font-bold';
+                }
+
+                const thumbUrl = `https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`;
+                const card = document.createElement('div');
+
+                if (currentViewMode === 'grid') {
+                    // --- GRID CARD ---
+                    // Added 'border border-transparent' to reserve space and prevent jitter on hover
+                    card.className = `group rounded-xl bg-zinc-800/50 text-card-foreground shadow-sm flex flex-col overflow-hidden transition-all duration-300 cursor-pointer border border-transparent`;
+                    card.onclick = () => window.open(`https://www.youtube.com/watch?v=${video.id}`, '_blank'); // Card Click Handler
+
+                    card.innerHTML = `
+                        <div class="relative w-full aspect-video overflow-hidden bg-muted">
+                            <img src="${thumbUrl}" alt="${video.title}" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105">
+                            <div class="absolute bottom-2 right-2 bg-black/80 backdrop-blur-sm text-[10px] font-medium px-1.5 py-0.5 rounded-sm ${viewText}">${formatNumber(video.viewCount)} view</div>
+                            <div class="absolute bottom-2 left-2 bg-black/80 backdrop-blur-sm text-white text-[10px] font-medium px-1.5 py-0.5 rounded-sm">${formatDuration(video.durationSec)}</div>
+                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
+                                 <div class="bg-background/90 rounded-full p-2 shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform"><i data-lucide="external-link" class="h-5 w-5 text-foreground"></i></div>
+                            </div>
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <h3 class="font-semibold leading-snug tracking-tight mb-2 line-clamp-2 min-h-[2.8em] text-[15px] text-muted-foreground group-hover:text-primary transition-colors" title="${video.title}">${video.title}</h3>
+                            <div class="flex items-center justify-between text-xs text-muted-foreground mb-4">
+                                <div class="flex items-center gap-1.5 truncate cursor-pointer hover:text-white transition-colors" onclick="window.open('https://www.youtube.com/channel/${video.channelId}', '_blank'); event.stopPropagation();">
+                                    <i data-lucide="user" class="h-3 w-3"></i>
+                                    <span class="truncate max-w-[100px]">${video.channelTitle}</span>
+                                </div>
+                                <span>${video.publishedDate}</span>
+                            </div>
+                            <div class="mt-auto pt-4 border-t border-zinc-700/50 grid grid-cols-2 gap-4">
+                                 <div><p class="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider mb-0.5">구독자</p><p class="font-mono text-sm font-medium ${subText}">${video.subCount > 0 ? formatNumber(video.subCount) : '비공개'}</p></div>
+                                <div class="text-right"><p class="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider mb-0.5">급상승 지수</p><p class="font-mono text-lg ${viralText}">${video.viralIndexDisplay}</p></div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // --- LIST CARD (Excel Style) ---
+                    // Updated Columns: IMG | Title | Channel | Views | Subs | Duration | Date | Viral
+                    // Grid Cols: [100px_1fr_120px_80px_80px_80px_80px_100px]
+                    card.className = `group grid grid-cols-[100px_1fr_120px_80px_80px_80px_80px_100px] gap-4 px-4 py-2.5 border-b border-border/60 transition-colors items-center h-auto whitespace-nowrap bg-background/50 hover:bg-zinc-800/50 cursor-pointer`; // Added cursor-pointer
+                    card.onclick = () => window.open(`https://www.youtube.com/watch?v=${video.id}`, '_blank'); // Card Click Handler
+
+                    // Format Date: Remove '20' prefix (e.g., 2024. 12. 10. -> 24. 12. 10.)
+                    const shortDate = video.publishedDate.replace(/^20/, '');
+
+                    card.innerHTML = `
+                        <!-- Thumb: aspect-video -->
+                        <div class="relative w-full aspect-video overflow-hidden rounded-sm bg-muted ring-1 ring-border/50 shadow-sm">
+                            <img src="${thumbUrl}" alt="" class="object-cover w-full h-full">
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/0 transition-colors"></div>
+                        </div>
+                        
+                        <!-- Title: Left -->
+                        <div class="min-w-0 pr-2 text-left">
+                             <h3 class="font-medium leading-tight truncate text-zinc-300 group-hover:text-primary transition-colors text-sm" title="${video.title}">${video.title}</h3>
+                        </div>
+
+                        <!-- Channel: Left -->
+                         <div class="flex items-center gap-1.5 truncate text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors text-left" onclick="window.open('https://www.youtube.com/channel/${video.channelId}', '_blank'); event.stopPropagation();">
+                             <i data-lucide="user" class="h-3.5 w-3.5 shrink-0 opacity-70"></i>
+                             <span class="truncate">${video.channelTitle}</span>
+                        </div>
+
+                        <!-- Views: Center -->
+                        <div class="text-center text-sm font-mono ${viewText}">${formatNumber(video.viewCount)}</div>
+
+                        <!-- Subs: Center -->
+                        <div class="text-center text-sm font-mono ${subText}">${video.subCount > 0 ? formatNumber(video.subCount) : '-'}</div>
+
+                        <!-- Duration: Center (NEW) -->
+                        <div class="text-center text-sm font-mono text-muted-foreground">${formatDuration(video.durationSec)}</div>
+
+                        <!-- Date: Center (Short Year) -->
+                        <div class="text-center text-sm text-muted-foreground font-mono tracking-tighter">${shortDate}</div>
+
+                        <!-- Viral: Center -->
+                        <div class="text-center font-mono text-sm font-bold ${viralText}">${video.viralIndexDisplay}</div>
+                    `;
+                }
+
+                // Random Color Hover Effect
+                card.addEventListener('mouseenter', () => {
+                    const hue = Math.floor(Math.random() * 360);
+                    card.style.backgroundColor = `hsl(${hue}, 50%, 15%)`;
+                    card.style.borderColor = `hsl(${hue}, 50%, 15%)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.backgroundColor = '';
+                    card.style.borderColor = '';
+                });
+
+                resultsGrid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        async function analyzeVideo(videoId) {
+            const video = currentVideos.find(v => v.id === videoId);
+            if (!video) return;
+            currentAnalysisVideo = video;
+            openModal(video.title);
+            showAnalysisView();
+            try {
+                const commentsData = await fetchWithRetry(key => `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=50&order=relevance&textFormat=plainText&key=${key}`);
+                let commentsText = "";
+                if (commentsData.items) { commentsText = commentsData.items.map(item => `- ${item.snippet.topLevelComment.snippet.textDisplay.replace(/\n/g, ' ')}`).join('\n'); }
+                if (!commentsText) { renderModalContent("<div class='flex flex-col items-center justify-center py-10'><i data-lucide='message-square-off' class='h-8 w-8 text-muted-foreground mb-2'></i><p class='text-muted-foreground'>분석할 댓글이 충분하지 않습니다.</p></div>"); return; }
+
+                const prompt = `
+                    이 영상의 제목은 "${video.title}"이고, 채널명은 "${video.channelTitle}"입니다.
+                    이 영상은 구독자 대비 조회수가 높은 인기 영상입니다.
+                    아래는 이 영상의 주요 댓글들입니다:
+                    ${commentsText}
+                    위 댓글 반응을 심층 분석해서 다음 JSON 형식으로 출력해줘:
+                    {
+                        "analysis": "시청자 반응 분석(Hook, Pain Point)과 벤치마킹 포인트를 요약해서 한국어로 작성. 마크다운 사용 가능.",
+                        "keywords": ["키워드1", "키워드2", "키워드3", "키워드4", "키워드5"]
+                    }
+                    키워드는 내가 이 영상을 벤치마킹해서 만들 때 사용할 수 있는 핵심 주제 5가지여야 해 (각 5글자 내외).
+                    반드시 JSON 형식만 출력해.
+                `;
+                const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+                const geminiRes = await fetch(geminiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+                const geminiData = await geminiRes.json();
+                if (geminiData.error) throw new Error(geminiData.error.message);
+                const rawText = geminiData.candidates[0].content.parts[0].text;
+                const jsonText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+                currentAnalysisData = JSON.parse(jsonText);
+                renderAnalysisContent(currentAnalysisData);
+            } catch (error) {
+                console.error(error);
+                renderModalContent(`<div class="text-destructive text-center p-6 border border-destructive/20 rounded-lg bg-destructive/10">분석 중 오류가 발생했습니다.<br><span class="text-xs opacity-70">${error.message}</span></div>`);
+            }
+        }
+
+        function renderAnalysisContent(data) {
+            const analysisHtml = formatAnalysisText(data.analysis);
+            let keywordsHtml = '<div class="mt-8 pt-6 border-t border-border"><h4 class="text-sm font-semibold mb-3 flex items-center gap-2 text-foreground">🚀 추천 주제 (클릭하여 대본 생성)</h4><div class="flex flex-wrap gap-2">';
+            data.keywords.forEach(keyword => { keywordsHtml += `<button onclick="generateScript('${keyword}')" class="inline-flex items-center rounded-full border border-border px-3 py-1 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:border-primary/50">${keyword}</button>`; });
+            keywordsHtml += '</div></div>';
+            renderModalContent(analysisHtml + keywordsHtml);
+        }
+
+        async function generateScript(keyword) {
+            modalContent.classList.add('hidden');
+            scriptContent.classList.remove('hidden');
+            scriptBody.innerHTML = '<div class="flex flex-col items-center py-10"><div class="loader mb-4 border-t-primary"></div><p class="text-muted-foreground text-sm">대본을 작성 중입니다...</p></div>';
+            try {
+                const prompt = `
+                    주제: "${keyword}"
+                    참고 영상: "${currentAnalysisVideo.title}"
+                    위 주제로 유튜브 영상 대본 개요를 작성해줘.
+                    [요구사항]
+                    1. 전체 길이는 공백 포함 300~500자 이내.
+                    2. 읽기 편한 줄글(내러티브) 형태.
+                    3. 구성: [제목 추천], [오프닝/Hook], [본문], [결론].
+                    4. 말투: 친근하고 자연스러운 한국어 구어체.
+                    5. 마크다운 형식으로 깔끔하게.
+                `;
+                const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+                const geminiRes = await fetch(geminiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+                const geminiData = await geminiRes.json();
+                if (geminiData.error) throw new Error(geminiData.error.message);
+                const scriptText = geminiData.candidates[0].content.parts[0].text;
+                scriptBody.innerHTML = marked.parse(scriptText);
+            } catch (error) {
+                console.error(error);
+                scriptBody.innerHTML = `<div class="text-destructive text-center p-4">대본 생성 중 오류가 발생했습니다.<br><span class="text-xs opacity-70">${error.message}</span></div>`;
+            }
+        }
+
+        // --- Helpers ---
+        function showLoading(isLoading) {
+            if (isLoading) {
+                loadingSpinner.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                resultsGrid.classList.add('hidden');
+            } else {
+                loadingSpinner.classList.add('hidden');
+            }
+        }
+
+        function formatNumber(num) {
+            if (num >= 100000000) return (num / 100000000).toFixed(1) + '억';
+            if (num >= 10000) return (num / 10000).toFixed(1) + '만';
+            return num.toLocaleString();
+        }
+
+        function parseDuration(duration) {
+            if (!duration) return 0;
+            const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+            if (!match) return 0;
+            const hours = (parseInt(match[1]) || 0);
+            const minutes = (parseInt(match[2]) || 0);
+            const seconds = (parseInt(match[3]) || 0);
+            return hours * 3600 + minutes * 60 + seconds;
+        }
+
+        function formatDuration(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            return `${m}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function openModal(title) {
+            modalVideoTitle.innerText = title;
+            analysisModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            analysisModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function showAnalysisView() {
+            modalLoading.classList.remove('hidden');
+            modalContent.classList.add('hidden');
+            scriptContent.classList.add('hidden');
+            modalContent.innerHTML = '';
+        }
+
+        function renderModalContent(html) {
+            modalLoading.classList.add('hidden');
+            modalContent.innerHTML = html;
+            modalContent.classList.remove('hidden');
+        }
+
+        function showToast(message) {
+            toastMessage.innerText = message;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        function formatAnalysisText(text) {
+            // Check if markdown library is available, otherwise simple formatting
+            if (typeof marked !== 'undefined') {
+                return marked.parse(text);
+            }
+            return text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Manual Trigger Only: Filters set state, Search button triggers action.
+            setupToggleGroup('dateFilterGroup');
+            setupToggleGroup('durationFilterGroup');
+            // Region Filter Removed setupToggleGroup call
+
+            // Viral Filter is client-side/instant, but for consistency let's keep it manual too?
+            // "Press Search to apply selected options".
+            setupToggleGroup('viralFilterGroup', () => renderResults());
+
+            // Add Enter key support for search
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchVideos();
+            });
+
+            // Close modal on outside click
+            analysisModal.addEventListener('click', (e) => {
+                if (e.target === analysisModal) closeModal();
+            });
+
+            // Add markdown support
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+            document.head.appendChild(script);
+
+            // Load Settings (Keys)
+            loadSettings();
+
+            // Settings Modal Click Outside
+            settingsModal.addEventListener('click', (e) => {
+                if (e.target === settingsModal) closeSettings();
+            });
+
+            lucide.createIcons();
+
+            // Auto-load Korea Trending on page load
+            fetchTrendingVideos();
+        });
+
+    </script>
+
+    <!-- Footer Added -->
+    <footer class="w-full py-6 border-t border-border mt-auto bg-background/50 backdrop-blur-sm">
+        <div class="container flex justify-end">
+            <p class="text-[10px] text-muted-foreground/50 select-none tracking-wider">COPYRIGHT INWORD. ALL RIGHTS
+                RESERVED.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
