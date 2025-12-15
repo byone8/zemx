@@ -261,11 +261,7 @@
                             <span class="text-sm font-bold">E</span>
                         </button>
                     </div>
-                    <!-- Settings Button -->
-                    <button onclick="openSettings()"
-                        class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-zinc-700 bg-zinc-800 text-zinc-400 shadow-sm transition-colors hover:bg-zinc-700 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                        <i data-lucide="settings" class="h-5 w-5"></i>
-                    </button>
+
                 </div>
             </div>
 
@@ -395,34 +391,7 @@
 
     </main>
 
-    <!-- Settings Modal -->
-    <div id="settingsModal"
-        class="fixed inset-0 z-[100] bg-background/80 backdrop-blur-sm hidden flex items-center justify-center p-4 duration-200">
-        <div
-            class="fixed left-[50%] top-[50%] z-[100] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background shadow-lg duration-200 sm:rounded-xl ring-1 ring-border">
-            <div class="flex flex-col space-y-1.5 p-6 pb-2">
-                <h3 class="font-semibold leading-none tracking-tight">API 설정</h3>
-                <p class="text-sm text-muted-foreground">유튜브 API 키를 입력해주세요. 기기에만 저장됩니다.</p>
-            </div>
-            <div class="p-6 pt-2 space-y-4">
-                <div class="space-y-2">
-                    <label
-                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">YouTube
-                        API Keys </label>
-                    <textarea id="youtubeKeysInput"
-                        class="flex min-h-[120px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
-                        placeholder="AIzaSy...&#10;AIzaSy..."></textarea>
-                    <p class="text-xs text-muted-foreground">여러 개의 키를 입력하면 할당량 초과 시 자동으로 다음 키를 사용합니다.</p>
-                </div>
-            </div>
-            <div class="flex items-center p-6 pt-0 justify-end gap-2">
-                <button onclick="closeSettings()"
-                    class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">닫기</button>
-                <button onclick="saveSettings()"
-                    class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">저장하기</button>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Analysis Modal -->
     <div id="analysisModal"
@@ -493,8 +462,14 @@
 
     <script>
         // --- Configuration ---
-        // Defaults (Blank initially, populated from LocalStorage)
-        let YOUTUBE_API_KEYS = [];
+        // Hardcoded YouTube API Keys
+        const YOUTUBE_API_KEYS = [
+            "AIzaSyBUyNT7jUB3OwWIeZ8IbKUoDtliDWBtHKo",
+            "AIzaSyB-PuTXcoywEwd_EsInO1Jm_ElHwZPLvKs",
+            "AIzaSyADBVinrZFJocyxkyyCKMWbbVZbIYtxGVI",
+            "AIzaSyCFvsNEnrCMZ3LDsqm0xIrDvwM0EdVM_XA"
+        ];
+
         let GEMINI_API_KEY = '';
         const GEMINI_MODEL = 'gemini-2.5-flash';
 
@@ -509,6 +484,8 @@
             // urlBuilder is a function that takes an API Key and returns the full URL
             const maxRetries = YOUTUBE_API_KEYS.length;
             let attempts = 0;
+            // Capture initial index to avoid infinite loops if all keys are exhausted
+            const startIndex = currentKeyIndex;
 
             while (attempts < maxRetries) {
                 const apiKey = getApiKey();
@@ -522,6 +499,11 @@
                         console.warn(`Key ${apiKey} exhausted. Switching...`);
                         currentKeyIndex = (currentKeyIndex + 1) % YOUTUBE_API_KEYS.length;
                         attempts++;
+
+                        // Prevent infinite loop if we circled back to start
+                        if (currentKeyIndex === startIndex && attempts >= maxRetries) {
+                            break;
+                        }
                         continue; // Retry with next key
                     }
 
@@ -529,85 +511,26 @@
                     return data;
 
                 } catch (error) {
-                    // Only retry on quota errors (handled above). 
-                    // Network errors or other API errors should bubble up unless we want to rotate on those too?
-                    // User only asked for quota rotation.
+                    // If it's a fetch error (network) or non-quota error, throw it.
+                    // Quota errors are handled in the `if` block above if response body is parsed.
+                    // But if fetch/json fails differently, we might want to check here too.
+                    // For now, assume data.error block catches the API error.
                     throw error;
                 }
             }
             throw new Error('All API keys quota exhausted.');
         }
 
-
         // --- State ---
 
         function loadSettings() {
-            const savedYoutube = localStorage.getItem('mineTool_youtubeKeys');
             const savedGemini = localStorage.getItem('mineTool_geminiKey');
-
-            if (savedYoutube) {
-                YOUTUBE_API_KEYS = JSON.parse(savedYoutube);
-            } else {
-                YOUTUBE_API_KEYS = [];
-                // saveSettingsCallback([], ''); // Don't auto-save empty keys, let user input them.
-            }
-
             if (savedGemini) {
                 GEMINI_API_KEY = savedGemini;
-            } else {
-                GEMINI_API_KEY = '';
             }
         }
 
-        function openSettings() {
-            const youtubeKeysInput = document.getElementById('youtubeKeysInput');
-            const geminiKeyInput = document.getElementById('geminiKeyInput');
-            const settingsModal = document.getElementById('settingsModal');
-
-            if (youtubeKeysInput) youtubeKeysInput.value = YOUTUBE_API_KEYS.join('\n');
-            if (geminiKeyInput) geminiKeyInput.value = GEMINI_API_KEY;
-            if (settingsModal) settingsModal.classList.remove('hidden');
-        }
-
-        function closeSettings() {
-            const settingsModal = document.getElementById('settingsModal');
-            if (settingsModal) settingsModal.classList.add('hidden');
-        }
-
-        function saveSettings() {
-            const youtubeKeysInput = document.getElementById('youtubeKeysInput');
-            const geminiKeyInput = document.getElementById('geminiKeyInput');
-
-            const youtubeRaw = youtubeKeysInput.value.trim();
-            const geminiRaw = geminiKeyInput ? geminiKeyInput.value.trim() : '';
-
-            if (!youtubeRaw) {
-                alert('YouTube API Key를 입력해주세요.');
-                return;
-            }
-
-            const newKeys = youtubeRaw.split('\n').map(k => k.trim()).filter(k => k);
-            saveSettingsCallback(newKeys, geminiRaw);
-            closeSettings();
-
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            if (toast) {
-                toastMessage.innerText = '설정이 저장되었습니다.';
-                toast.classList.remove('translate-y-24', 'opacity-0');
-                setTimeout(() => {
-                    toast.classList.add('translate-y-24', 'opacity-0');
-                }, 3000);
-            }
-        }
-
-        function saveSettingsCallback(youtubeKeys, geminiKey) {
-            YOUTUBE_API_KEYS = youtubeKeys;
-            GEMINI_API_KEY = geminiKey;
-            currentKeyIndex = 0;
-            localStorage.setItem('mineTool_youtubeKeys', JSON.stringify(YOUTUBE_API_KEYS));
-            localStorage.setItem('mineTool_geminiKey', GEMINI_API_KEY);
-        }
+        // Settings UI functions removed (openSettings, closeSettings, saveSettings)
 
         let currentVideos = [];
         let currentViewMode = 'grid';
@@ -1466,10 +1389,7 @@
             // Load Settings (Keys)
             loadSettings();
 
-            // Settings Modal Click Outside
-            settingsModal.addEventListener('click', (e) => {
-                if (e.target === settingsModal) closeSettings();
-            });
+
 
             lucide.createIcons();
 
